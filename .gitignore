@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Models and results
+models/
+results/
+*.pth
+*.pt
+*.bin
+
+# Data
+data/
+*.csv
+*.json
+
+# Output (but allow result files)
+# *.png
+# *.jpg
+*.pdf
+# Allow result files
+!f1_score_comparison.png
+!results_summary.csv
+
+# Environment
+.env
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+

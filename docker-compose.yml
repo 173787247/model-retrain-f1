@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  jupyter:
+    # 使用现有的 PyTorch GPU 镜像
+    image: pytorch/pytorch:2.7.0-cuda12.8-cudnn9-devel
+    container_name: model-retrain-f1-jupyter
+    ports:
+      - "8891:8888"
+    volumes:
+      - .:/app
+      - ./models:/app/models
+      - ./results:/app/results
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+      - CUDA_VISIBLE_DEVICES=0
+      - HF_HOME=/app/models
+      - TRANSFORMERS_CACHE=/app/models
+    # RTX 5080 GPU 支持
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    shm_size: '8gb'
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    # 启动命令：安装依赖并启动 Jupyter
+    command: >
+      bash -c "
+        echo '安装依赖...' &&
+        pip install --no-cache-dir transformers datasets accelerate evaluate matplotlib pandas jupyter jupyterlab ipywidgets tqdm &&
+        echo '启动 Jupyter Lab...' &&
+        jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root 
+        --NotebookApp.token='' --NotebookApp.password='' 
+        --NotebookApp.allow_origin='*' --NotebookApp.disable_check_xsrf=True
+      "
+
